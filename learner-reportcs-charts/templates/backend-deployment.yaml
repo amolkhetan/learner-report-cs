@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.backend.appName }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.backend.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.backend.appName }}
+    spec:
+      containers:
+      - name: {{ .Values.backend.container.name }}
+        image: {{ .Values.backend.imageRepo.repository }}:{{ .Values.backend.imageRepo.tag }}
+        imagePullPolicy: {{ .Values.backend.imageRepo.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.backend.service.port }}
+        env:
+        - name: MONGODB_URI
+          value: mongodb://admin:password123@mongodb-service:27017
+          # valueFrom:
+          #   secretKeyRef:
+          #     name: mongodb-secret
+          #     key: uri

@@ -1,0 +1,31 @@
+replicaCount: 1
+
+frontend:
+  appName: frontendlrcs
+  imageRepo:
+    repository: amolkhetan/frontend-lrccapstone
+    tag: latest
+    pullPolicy: IfNotPresent
+  container:
+    name: frontendlrcs-container
+    port: 3000
+  service:
+    type: LoadBalancer
+    port: 3000
+    nodePort: 30080
+
+backend:
+  appName: backendlrcs
+  imageRepo:
+    repository: amolkhetan/backend-lrccapstone
+    tag: latest
+    pullPolicy: IfNotPresent
+  container:
+    name: backendlrcs-container
+    port: 3001
+  service:
+    type: LoadBalancer
+    port: 3001
+    nodePort: 30090
+
+  
