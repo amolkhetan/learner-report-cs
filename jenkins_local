@@ -1,0 +1,88 @@
+##Jenkins to be tested for deployment on docker desktop
+
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_BUILDKIT     = '0'
+        DOCKERHUB_CREDS     = 'amol-docker'
+        GIT_REPO            = 'https://github.com/amolkhetan/learner-report-cs/'
+        HELM_REPO           = 'https://github.com/amolkhetan/learner-report-cs/'
+        K8S_NAMESPACE       = 'learner-report'
+    }
+
+    stages {
+
+        stage('Clone App Repository') {
+            steps {
+                git url: "${GIT_REPO}", branch: 'main'
+            }
+        }
+
+        stage('Build & Push Docker Images') {
+            steps {
+                script {
+                    def services = ['learnerReportCS_backend', 'learnerReportCS_frontend']
+                    withCredentials([usernamePassword(
+                        credentialsId: "${DOCKERHUB_CREDS}",
+                        usernameVariable: 'DOCKERHUB_USER',
+                        passwordVariable: 'DOCKERHUB_PASS'
+                    )]) {
+                        services.each { svc ->
+                            def image = "${DOCKERHUB_USER}/learnerreportcs_${svc}".toLowerCase()
+                            dir("${svc}") {
+                                sh """
+                                    echo "🔧 Building image for ${image}"
+                                    DOCKER_BUILDKIT=0 docker build --no-cache -t ${image}:latest .
+                                    echo "${DOCKERHUB_PASS}" | docker login -u "${DOCKERHUB_USER}" --password-stdin
+                                    docker push ${image}:latest
+                                """
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Prepare Helm Chart') {
+            steps {
+                dir('helmchart') {
+                    git url: "${HELM_REPO}", branch: 'main'
+                }
+            }
+        }
+
+        stage('Deploy with Helm') {
+            steps {
+                sh """
+                    echo "🚀 Deploying MERN stack using Helm"
+                    helm lint helmchart/learner-reportcs-charts
+                    helm upgrade --install learner-report helmchart/learner-reportcs-charts \\
+                        --namespace ${K8S_NAMESPACE} --create-namespace \\
+                        --set frontend.tag=latest \\
+                        --set backend.tag=latest
+                """
+            }
+        }
+
+        stage('Verify Local Deployment') {
+            steps {
+                sh """
+                    kubectl config get-contexts
+                    echo "🔍 Checking pods and services"
+                    kubectl get pods -n ${K8S_NAMESPACE}
+                    kubectl get svc -n ${K8S_NAMESPACE}
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ MERN app deployed successfully to Docker Desktop Kubernetes!"
+        }
+        failure {
+            echo "❌ Deployment failed. Check logs for details."
+        }
+    }
+}
