@@ -5,6 +5,7 @@ Backend Port: 3001
 Frontend Port: 3000
 
 **🛠️ Tech Stack**
+
 nodejs – App codinging language
 Docker – Building Docker Image
 K8s/Minikube – For Deployment
@@ -12,8 +13,7 @@ K8s/Minikube – For Deployment
 
 ****Set Up****
 
-Two Different Git Repos were merged into single Repo using below set of commands:
-
+Two Different Git Repos were merged into single Repo.
 
 Created .env and Docker files for each backend and front end services.
 
