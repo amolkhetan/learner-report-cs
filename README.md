@@ -7,7 +7,9 @@ Frontend Port: 3000
 **🛠️ Tech Stack**
 
 nodejs – App codinging language
+
 Docker – Building Docker Image
+
 K8s/Minikube – For Deployment
 
 
@@ -69,7 +71,7 @@ FrontEnd was validated using LB endpoint and port 3000
 
 <img width="1910" height="959" alt="image" src="https://github.com/user-attachments/assets/3a3feff8-b0d8-466f-9931-3ed36dfa2a4b" />
 
-Note: I am trying to do changes in jenkins file to check if cluster is present or not, if not then create before deploy. Also, wanted to use mongodb is on cloud  but wanted to use it from cluster itself. But the jenkins is getting stuck due to space issue and hence submitting it without testing the final changes but will do it as and when jenkins issue is resolved.
+**Note**: I am trying to do changes in jenkins file to check if cluster is present or not, if not then create before deploy. Also, wanted to use mongodb is on cloud  but wanted to use it from cluster itself. But the jenkins is getting stuck due to space issue and hence submitting it without testing the final changes but will do it as and when jenkins issue is resolved.
 
 <img width="1918" height="846" alt="image" src="https://github.com/user-attachments/assets/01a06bac-b79c-464b-b7e7-a4f79726a964" />
 
